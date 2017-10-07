@@ -37,7 +37,6 @@ public class AsignaturaAdmin {
      * @return the asignatura name.
      */
     public String getNombreAsignatura() {
-	// Modificado
     	return nombreAsignatura;
     }
     
@@ -49,7 +48,6 @@ public class AsignaturaAdmin {
      * @return a list with the matriculas added.
      */
     public PositionList<String> matricular(PositionList<String> matriculas) {
-	// Hay que modificar este metodo
     	PositionList<String> aux = new NodePositionList<String>();
 
     	for(String alumno : matriculas){
@@ -72,12 +70,11 @@ public class AsignaturaAdmin {
      * @return a list with the matriculas that were removed.
      */
     public PositionList<String> desMatricular(PositionList<String> matriculas) {
-	// Hay que modificar este metodo
     	PositionList<String> aux = new NodePositionList<String>();
 
     	for(String alumno : matriculas){
     		try{
-    			if(tieneNota(alumno)){
+    			if(!tieneNota(alumno)){
     				notas.remove(positionOf(alumno));
         			aux.addLast(alumno);
     			}
@@ -92,14 +89,18 @@ public class AsignaturaAdmin {
      * @return true if the matricula has been added, false otherwise.
      */
     public boolean estaMatriculado(String matricula) {
-    	boolean matriculado = false;
-        for (Pair<String, Integer> aux : notas) {
-            if (matricula.equals(aux.getLeft())){
-                matriculado = true;
-            }
-        }
-
-        return matriculado;
+//    	boolean matriculado = false;
+//        for (Pair<String, Integer> aux : notas) {
+//            if (matricula.equals(aux.getLeft())){
+//                matriculado = true;
+//            }
+//        }
+//        return matriculado;
+    	if(positionOf(matricula) != null){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
 
     /**
@@ -112,13 +113,7 @@ public class AsignaturaAdmin {
     	if(!estaMatriculado(matricula)){
     		throw new InvalidMatriculaException();
     	}
-    	boolean tieneNota = false;
-        for (Pair<String, Integer> aux : notas) {
-            if (!aux.getRight().equals(null)){
-                tieneNota = true;
-            }
-        }
-        return tieneNota;
+        return (positionOf(matricula).element().getRight() != null);
     }
 
     /**
@@ -128,8 +123,18 @@ public class AsignaturaAdmin {
      * or the matricula has not been added to the asignatura (or was removed).
      */
     public int getNota(String matricula) throws InvalidMatriculaException {
-	// Hay que modificar este metodo
-	return -1;
+    	int nota;
+    	try{
+    		if(tieneNota(matricula)){
+    			nota = positionOf(matricula).element().getRight();
+    		}else{
+    			throw new InvalidMatriculaException();
+    		}
+    	}
+    	catch(InvalidMatriculaException e){
+    		throw new InvalidMatriculaException();    			
+    	}    	
+    	return nota;
     }
 
     /**
@@ -138,7 +143,11 @@ public class AsignaturaAdmin {
      * been added to the asignatura (or was removed).
      */
     public void setNota(String matricula, int nota) throws InvalidMatriculaException {
-	// Hay que modificar este metodo
+    	if(estaMatriculado(matricula)){
+    		positionOf(matricula).element().setRight(nota);
+    	}else{
+    		throw new InvalidMatriculaException();
+    	}
     }
 
     /**
@@ -149,8 +158,16 @@ public class AsignaturaAdmin {
     * with notas between (including) minNota...maxNota.
     */
     public PositionList<String> alumnosEnRango(int minNota, int maxNota) {
-	// Hay que modificar este metodo
-	return null;
+    	PositionList<String> enRango = new NodePositionList<String>();
+    	for (Pair<String, Integer> aux : notas) {
+    		try{
+    			if (tieneNota(aux.getLeft()) &&  aux.getRight() >= minNota && aux.getRight() <= maxNota){
+    				enRango.addLast(aux.getLeft());
+    			}
+    		}
+    		catch (InvalidMatriculaException e){}
+    	}
+    	return enRango;
     }
 
     /**
@@ -161,13 +178,26 @@ public class AsignaturaAdmin {
      * @return the average grade of the asignatura.
      */
     public double notaMedia() {
-	return 10.0;
+    	int numNotas = 0;
+    	int acumulado = 0;
+    	if (notas.isEmpty()) return 0.0;
+    	for (Pair<String, Integer> aux : notas) {
+    		try{
+    			if (tieneNota(aux.getLeft())){
+    				numNotas++;
+    				acumulado = acumulado + aux.getRight();
+    			}
+    		}
+    		catch (InvalidMatriculaException e){}    		
+    	}
+    	if (numNotas == 0) return 0.0;
+    	return ((double)acumulado / (double)numNotas);
     }
     
     private Position<Pair<String, Integer>> positionOf(String matricula){
     	Position<Pair<String, Integer>> position = notas.first();
-        for (Pair<String, Integer> aux : notas) {
-            if (matricula.equals(aux.getLeft())){
+        while(position != null){
+    		if (matricula.equals(position.element().getLeft())){
                break;
             }
             position = notas.next(position);            
