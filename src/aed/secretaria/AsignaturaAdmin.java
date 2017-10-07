@@ -28,8 +28,8 @@ public class AsignaturaAdmin {
      * and assigned notas.
      */
     public AsignaturaAdmin(String nombreAsignatura) {
-	this.nombreAsignatura = nombreAsignatura;
-	this.notas = new NodePositionList<Pair<String,Integer>>();
+    	this.nombreAsignatura = nombreAsignatura;
+    	this.notas = new NodePositionList<Pair<String,Integer>>();
     }
  
     /**
@@ -37,8 +37,8 @@ public class AsignaturaAdmin {
      * @return the asignatura name.
      */
     public String getNombreAsignatura() {
-	// Hay que modificar este metodo
-	return null;
+	// Modificado
+    	return nombreAsignatura;
     }
     
     /**
@@ -50,7 +50,17 @@ public class AsignaturaAdmin {
      */
     public PositionList<String> matricular(PositionList<String> matriculas) {
 	// Hay que modificar este metodo
-	return null;
+    	PositionList<String> aux = new NodePositionList<String>();
+
+    	for(String alumno : matriculas){
+    		if (!estaMatriculado(alumno)){
+    			Pair<String, Integer> a = new Pair<String, Integer>(alumno, null);
+    			notas.addLast(a);
+    			aux.addLast(alumno);
+    		}
+    	}
+    	
+    	return aux;
     }
 
     /**
@@ -63,7 +73,18 @@ public class AsignaturaAdmin {
      */
     public PositionList<String> desMatricular(PositionList<String> matriculas) {
 	// Hay que modificar este metodo
-	return null;
+    	PositionList<String> aux = new NodePositionList<String>();
+
+    	for(String alumno : matriculas){
+    		try{
+    			if(tieneNota(alumno)){
+    				notas.remove(positionOf(alumno));
+        			aux.addLast(alumno);
+    			}
+    		}catch(InvalidMatriculaException e){} 		
+    	}
+    	
+    	return aux;
     }
 	
     /**
@@ -71,8 +92,14 @@ public class AsignaturaAdmin {
      * @return true if the matricula has been added, false otherwise.
      */
     public boolean estaMatriculado(String matricula) {
-	// Hay que modificar este metodo
-	return false;
+    	boolean matriculado = false;
+        for (Pair<String, Integer> aux : notas) {
+            if (matricula.equals(aux.getLeft())){
+                matriculado = true;
+            }
+        }
+
+        return matriculado;
     }
 
     /**
@@ -82,8 +109,16 @@ public class AsignaturaAdmin {
      * has not been added to the asignatura (or was removed)
      */
     public boolean tieneNota(String matricula) throws InvalidMatriculaException {
-	// Hay que modificar este metodo
-	return false;
+    	if(!estaMatriculado(matricula)){
+    		throw new InvalidMatriculaException();
+    	}
+    	boolean tieneNota = false;
+        for (Pair<String, Integer> aux : notas) {
+            if (!aux.getRight().equals(null)){
+                tieneNota = true;
+            }
+        }
+        return tieneNota;
     }
 
     /**
@@ -127,6 +162,17 @@ public class AsignaturaAdmin {
      */
     public double notaMedia() {
 	return 10.0;
+    }
+    
+    private Position<Pair<String, Integer>> positionOf(String matricula){
+    	Position<Pair<String, Integer>> position = notas.first();
+        for (Pair<String, Integer> aux : notas) {
+            if (matricula.equals(aux.getLeft())){
+               break;
+            }
+            position = notas.next(position);            
+        }
+        return position;    	
     }
 }
 
