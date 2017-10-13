@@ -72,8 +72,38 @@ public class Secretaria {
    * @return la nota media del alumno.
    */
     public double notaMediaExpediente (String matricula) {
-      // Completar este metodo
-      return 0.0;
+   // Completar este metodo
+    	
+    	double resultado = 0;
+    	int numAsignatura = 0;
+    	
+    	Iterator<AsignaturaAdmin> t = asignaturas.iterator();
+    	
+    	while(t.hasNext()){
+    		
+    		AsignaturaAdmin asignatura = t.next();
+    		
+    		try{
+    		if(asignatura.estaMatriculado(matricula) && asignatura.tieneNota(matricula)){
+    			
+    			resultado += asignatura.getNota(matricula);
+    			numAsignatura++;
+    		}	
+    	}
+    		
+    		catch(InvalidMatriculaException e){
+    			
+    			return 0;
+    		}
+    	}
+    	
+    	if(resultado==0){
+    		
+    		return 0;
+    	}
+
+      return resultado/numAsignatura;
+   
     }
 
   /**
@@ -86,8 +116,23 @@ public class Secretaria {
    * @return el nombre de la asignatura con la mejor nota media.
    */
     public String mejorNotaMedia() {
-      // Completar este metodo
-      return null;
+        // Completar este metodo
+    	
+    	double maximo = 0;
+    	String asignatura = " ";
+    	
+    	Iterator<AsignaturaAdmin> t = asignaturas.iterator();
+    	
+    	while(t.hasNext()){
+    		AsignaturaAdmin asignaturas = t.next();
+    		if(asignaturas.notaMedia() >= maximo){
+    			maximo = asignaturas.notaMedia();
+    			asignatura = asignaturas.getNombreAsignatura();
+    			
+    		}
+    	}
+    	
+      return asignatura;
     }
 
   /**
