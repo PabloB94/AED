@@ -158,7 +158,7 @@ public class Secretaria {
     		AsignaturaAdmin admin = it.next();
     		try{
     			int nota = admin.getNota(matricula);
-    			Pair<String,Integer> subject = new Pair<String,Integer>(matricula,nota);
+    			Pair<String,Integer> subject = new Pair<String,Integer>(admin.getNombreAsignatura(),nota); //Cambiado String Matriculas a admin.getNombreAsignatura
     			aux.add(i, subject);
     			i++;
     		}
@@ -190,8 +190,14 @@ public class Secretaria {
     		AsignaturaAdmin admin2;
     		i++;
     		int j = 0;
-    		while(it2.hasNext() && j<i){
+    		while(it2.hasNext() && j<i){ //Al realizar esta operación, llegas al final de it2 por lo tanto el siguiente while nunca se ejecuta.
     			admin2 = it2.next();
+				if(compartenAlumnos(admin1, admin2)){
+					Pair<String, String> subjects = new Pair<String, String>(admin1.getNombreAsignatura(), admin2.getNombreAsignatura());
+					if (!subjects.getRight().equals(subjects.getLeft())) { //Por algun motivo compara la misma asignatura varias veces
+						res.add(res.size(), subjects);
+					}
+				}
     		}    			
     		while (it2.hasNext()){
     			admin2 = it2.next();
@@ -214,12 +220,13 @@ public class Secretaria {
 	  Iterable<String> students2 = a2.matriculados();
 	  
 	  Iterator<String> it1 = students1.iterator();
-	  Iterator<String> it2 = students2.iterator();
+
 	  
 	  boolean notFound = true;
 	  
 	  while(it1.hasNext() && notFound){
 		  String auxs1 = it1.next();
+		  Iterator<String> it2 = students2.iterator();
 		  while(it2.hasNext() && notFound){
 			  String auxs2 = it2.next();
 			  if(auxs2.equals(auxs1)) notFound = false;			  
