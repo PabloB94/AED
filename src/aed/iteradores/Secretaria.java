@@ -152,7 +152,7 @@ public class Secretaria {
     		AsignaturaAdmin admin = it.next();
     		try{
     			int nota = admin.getNota(matricula);
-    			Pair<String,Integer> subject = new Pair<String,Integer>(matricula,nota);
+    			Pair<String,Integer> subject = new Pair<String,Integer>(admin.getNombreAsignatura(),nota);
     			aux.add(i, subject);
     			i++;
     		}
