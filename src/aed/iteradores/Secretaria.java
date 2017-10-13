@@ -129,8 +129,28 @@ public class Secretaria {
    * que no tienen ningún alumno en comun.
    */
     public Iterable<Pair<String,String>> asignaturasNoConflictivas () {
-      // Completar este metodo
-      return null;
+    	IndexedList<Pair<String,String>> res = new ArrayIndexedList<Pair<String,String>>();
+    	Iterator<AsignaturaAdmin> it1 = asignaturas.iterator();
+    	
+    	int i = 0;
+    	while (it1.hasNext()) {
+    		Iterator<AsignaturaAdmin> it2 = asignaturas.iterator();
+    		AsignaturaAdmin admin1 = it1.next();
+    		AsignaturaAdmin admin2;
+    		i++;
+    		int j = 0;
+    		while(it2.hasNext() && j<i){
+    			admin2 = it2.next();
+    		}    			
+    		while (it2.hasNext()){
+    			admin2 = it2.next();
+    			if(compartenAlumnos(admin1, admin2)){
+    				Pair<String, String> subjects = new Pair<String, String>(admin1.getNombreAsignatura(), admin2.getNombreAsignatura());
+    				res.add(res.size(), subjects);
+    			}
+    		}
+    	}
+    	return res;
     }
 
   /**
@@ -139,7 +159,21 @@ public class Secretaria {
    * @return true si las dos asignaturas no tienen ningún alumno en comun.
    */
   private boolean compartenAlumnos (AsignaturaAdmin a1, AsignaturaAdmin a2) {
-    // Hay que modificar este metodo
-    return false;
+	  Iterable<String> students1 = a1.matriculados();
+	  Iterable<String> students2 = a2.matriculados();
+	  
+	  Iterator<String> it1 = students1.iterator();
+	  Iterator<String> it2 = students2.iterator();
+	  
+	  boolean notFound = true;
+	  
+	  while(it1.hasNext() && notFound){
+		  String auxs1 = it1.next();
+		  while(it2.hasNext() && notFound){
+			  String auxs2 = it2.next();
+			  if(auxs2.equals(auxs1)) notFound = false;			  
+		  }
+	  }
+	  return notFound;
   }
 }
