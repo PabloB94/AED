@@ -131,6 +131,12 @@ public class Secretaria {
     			
     		}
     	}
+	    
+	
+	if(maximo == 0 || asignatura == " "){
+    		
+    		return null;
+    	}
     	
       return asignatura;
     }
