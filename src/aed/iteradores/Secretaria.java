@@ -192,6 +192,7 @@ public class Secretaria {
     		int j = 0;
     		while(it2.hasNext() && j<i){
     			admin2 = it2.next();
+    			j++;
     		}    			
     		while (it2.hasNext()){
     			admin2 = it2.next();
@@ -214,12 +215,13 @@ public class Secretaria {
 	  Iterable<String> students2 = a2.matriculados();
 	  
 	  Iterator<String> it1 = students1.iterator();
-	  Iterator<String> it2 = students2.iterator();
+	  
 	  
 	  boolean notFound = true;
 	  
 	  while(it1.hasNext() && notFound){
 		  String auxs1 = it1.next();
+		  Iterator<String> it2 = students2.iterator();
 		  while(it2.hasNext() && notFound){
 			  String auxs2 = it2.next();
 			  if(auxs2.equals(auxs1)) notFound = false;			  
