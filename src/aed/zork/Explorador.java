@@ -12,55 +12,33 @@ import es.upm.aedlib.positionlist.*;
 public class Explorador {
   
 	public static Pair<Object,PositionList<Lugar>> explora(Lugar inicialLugar) {
-		Lugar current = inicialLugar;
-		PositionList<Lugar> camino = new NodePositionList<Lugar>();
-		camino.addLast(current);
+		PositionList<Lugar> camino  = new NodePositionList<Lugar>();
+		camino.addFirst(inicialLugar);
 		Pair<Object,PositionList<Lugar>> res = null;
-		if (!current.sueloMarcadoConTiza()){
-			if (current.tieneTesoro()){
-				Object tesoro = current.getTesoro();
+		if (!inicialLugar.sueloMarcadoConTiza()){
+			if (inicialLugar.tieneTesoro()){
+				Object tesoro = inicialLugar.getTesoro();
 				res = new Pair<Object,PositionList<Lugar>>(tesoro, camino);
 				return res;
 		    }
-			current.marcaSueloConTiza();
+			inicialLugar.marcaSueloConTiza();
 			Iterable<Lugar> ways = inicialLugar.caminos();
 			Iterator<Lugar> it = ways.iterator();
 			while (it.hasNext()){
 				Lugar next = it.next();
 				if (!next.sueloMarcadoConTiza()){
-					res = explora(next);
+					res = explora(next);					
 				}
-				if (res.getLeft() != null){
-					
-				}
-				
+				if (res != null){
+					camino = res.getRight();
+					camino.addFirst(inicialLugar);
+					res = new Pair<Object,PositionList<Lugar>>(res.getLeft(), camino);	
+					return res;
+				}				
 			}
-			
 		}
-		
+		return null;
 	}
-  
-
+		
 }
-
-//LIFO<Lugar> faltaPorExplorar = new LIFOList<Lugar>();
-//Lugar current = inicialLugar;
-//faltaPorExplorar.push(current);
-//while (!faltaPorExplorar.isEmpty()){
-//	current = faltaPorExplorar.pop();
-//	if (!current.sueloMarcadoConTiza()){
-//		if (current.tieneTesoro()){
-//			return current.getTesoro();
-//	    }
-//		current.marcaSueloConTiza();
-//		Iterable<Lugar> ways = current.caminos();
-//	    Iterator<Lugar> it = ways.iterator();
-//	    while(it.hasNext()){
-//	    	Lugar next = it.next();
-//	    	if (!next.sueloMarcadoConTiza()){
-//	    		faltaPorExplorar.push(next);
-//	    	}
-//	    }
-//	}
-//}
-//return null;	
+  
